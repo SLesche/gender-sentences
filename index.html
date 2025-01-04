@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Repetition Alert Task</title>
+    <title>Picture Identification Task</title>
     <meta charset="UTF-8">
     <script src="jspsych/dist/jspsych.js"></script>
     <script src="jspsych/dist/plugin-html-keyboard-response.js"></script>
@@ -11,7 +11,7 @@
     <script src="jspsych/dist/plugin-survey-likert.js"></script>
     <script src="jspsych/dist/plugin-survey-text.js"></script>
     <link href="jspsych/dist/jspsych.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="css/rat_styles.css">
+    <link rel="stylesheet" href="css/stim_styles.css">
     <script src="scripts/setup.js"></script>
     <script src="scripts/helper_function.js"></script>
     <script src="scripts/instructions.js"></script>
@@ -19,60 +19,47 @@
     <script src="scripts/debriefing.js"></script>
   </head>
   <body></body>
-  <script>  
-    var easy_trial = {
-      type: jsPsychHtmlKeyboardResponse,
-        stimulus: function(){
-          return get_alternate_stimulus();
+  <script>
+    var picture_trial = {
+        type: jsPsychHtmlKeyboardResponse,
+        full_stimulus:  function(){
+            return get_random_stimulus();
         },
+        stimulus: full_stimulus.picture,
         choices: possible_response_keys,
         stimulus_duration: stim_duration,
         trial_duration: trial_duration,
         response_ends_trial: true,
+        post_trial_gap: rsi_duration,
         on_finish: function(data) {
             // Record accuracy and congruency
             // is accurate if the response is equal to the correct response, which is determined by the previous stimulus
-            if (jsPsych.data.get().filter([{type: 'trial'}]).last(1).values()[0] == null | trial_num === 0){
-                data.is_repeat = 0;
-            } else {
-                let previous_stim = jsPsych.data.get().filter([{type: 'trial'}]).last(1).values()[0].stimulus;
-                data.is_repeat = data.stimulus === previous_stim ? 1 : 0;
-            }            
-            data.accuracy = data.response === get_correct(data.stimulus, data.is_repeat) ? 1 : 0;
+            data.is_target = is_target(data.stimulus);      
+            data.accuracy = data.response === get_correct(data.is_target) ? 1 : 0;
             data.letter_stim = extract_stim_from_html(data.stimulus);
             data.type = 'trial';
-            data.is_practice = 1;
+            data.is_practice = block_num === 0 ? 1 : 0;
             data.block_num = block_num;
+            data.trial_num = trial_num;
         }
-    }
+    };
 
-    var trial = {
+    var sentence_trial = {
         type: jsPsychHtmlKeyboardResponse,
-        stimulus: function(){
-          if (trial_num < n_alternating_start){
-            return get_alternate_stimulus();
-          } else {
+        full_stimulus:  function(){
             return get_random_stimulus();
-          }
         },
+        stimulus: full_stimulus.sentence,
         choices: possible_response_keys,
         stimulus_duration: stim_duration,
         trial_duration: trial_duration,
         response_ends_trial: true,
-        post_trial_gap: function(){
-          let gap = block_num === 0 ? 0: rsi_duration - fixation_dur
-          return gap
-        },
+        post_trial_gap: rsi_duration,
         on_finish: function(data) {
             // Record accuracy and congruency
             // is accurate if the response is equal to the correct response, which is determined by the previous stimulus
-            if (jsPsych.data.get().filter([{type: 'trial'}]).last(1).values()[0] == null | trial_num === 0){
-                data.is_repeat = 0;
-            } else {
-                let previous_stim = jsPsych.data.get().filter([{type: 'trial'}]).last(1).values()[0].stimulus;
-                data.is_repeat = data.stimulus === previous_stim ? 1 : 0;
-            }            
-            data.accuracy = data.response === get_correct(data.stimulus, data.is_repeat) ? 1 : 0;
+            data.is_target = is_target(data.stimulus);      
+            data.accuracy = data.response === get_correct(data.is_target) ? 1 : 0;
             data.letter_stim = extract_stim_from_html(data.stimulus);
             data.type = 'trial';
             data.is_practice = block_num === 0 ? 1 : 0;
@@ -91,8 +78,6 @@
           return '<div class = "feedback-stim"><span style = "color: green">Richtig</span></div>'; 
         } else if (last_response == null){
           return '<div class = "feedback-stim"><span style = "color: red">Zu langsam!</span></div>'; 
-        } else if (last_is_repeat & (last_response !== " ")){
-          return '<div class = "feedback-stim"><span style = "color: red">Falsch. Bei Wiederholungen die Leertaste drücken</span></div>'; 
         } else {
           return '<div class = "feedback-stim"><span style = "color: red">Falsch</span></div>'; 
         }
@@ -113,21 +98,8 @@
         data: {type: 'fixation', block_num: block_num},
     };
 
-    let easy_trials = {
-      timeline: [fixation_cross, easy_trial, feedback],
-        loop_function: function(data){
-            if (trial_num < n_repeat_trials){
-                trial_num ++;
-                return true;
-            } else {
-                trial_num = 0;
-                return false;
-            }
-        }
-    }
-
     let trials = {
-        timeline: [fixation_cross, trial],
+        timeline: [fixation_cross, sentence_trial, picture_trial],
         loop_function: function(data){
             if (trial_num < n_trials){
                 trial_num ++;
@@ -153,7 +125,7 @@
     }
 
     let practice_trials = {
-        timeline: [fixation_cross, trial, feedback],
+        timeline: [fixation_cross, sentence_trial, picture_trial, feedback],
         loop_function: function(data){
             if (trial_num < n_practice){
                 trial_num ++;
@@ -216,7 +188,7 @@
     var repeat_practice_now = 1;
 
     // survey trials missing
-    experiment_timeline = [welcome_screen, consent, survey_trial, instructions, easy_trials, nogo_instructions, repeatable_practice, experiment_begins, experiment_blocks, slider_instructions, slider_survey, open_question, debriefing];
+    experiment_timeline = [instructions, repeatable_practice, experiment_begins, experiment_blocks, debriefing];
     //experiment_timeline = [open_question, debriefing]
     jsPsych.run(experiment_timeline);
   </script>

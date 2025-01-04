@@ -9,8 +9,12 @@ body {
     height: 100vh;
   }
   
-.rat-stim {
+.sentence-stim {
     font-size: 60px;
+}
+
+.picture-stim {
+
 }
 
 .feedback-stim {
