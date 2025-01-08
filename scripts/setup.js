@@ -31,8 +31,8 @@ const fixation_dur = 200;
 const rsi_duration = 1000;
 
 // Remove later
-var subject_number = jsPsych.randomization.randomID(6);
+const subject_id = jsPsych.randomization.randomID(6);
 
 // record the condition assignment in the jsPsych data
 // this adds a property called 'subject' and a property called 'condition' to every trial
-const experiment_file = "./data/" + experiment_short_name + "_" + subject_number + "_" + init_time + ".csv"
+const experiment_file = "./data/" + experiment_short_name + "_" + subject_id + "_" + init_time + ".csv"
