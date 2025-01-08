@@ -89,9 +89,9 @@
             maintain_aspect_ratio: true,
             stimulus: function() {
               const picture_path = 'stimuli/imgs/' + jsPsych.timelineVariable('picture');
-              return `<div class = "picture-stim"><img src="${picture_path}"></div>`
+              return `<div class="picture-stim"><img src="${picture_path}" class="stimulus-image"></div>`;
             },
-            prompt: '<p class = "normal-text">Ist das Bild passend zur Aussage?\n\n Ja = "D"             Nein "L"</p>',
+            prompt: '<p class = "normal-text">Ist das Bild passend zur Aussage? <br> Ja = "D" Nein "L"</p>',
             choices: possible_response_keys,
             trial_duration: picture_duration,
             response_ends_trial: true,
