@@ -69,22 +69,29 @@
       var sentence_picture_procedure = {
         timeline: [
           {
-              type: jsPsychHtmlKeyboardResponse,
-              stimulus: '<p class = "normal-text">+</p>',
-              choices: "NO_KEYS", // No keys allowed during fixation
-              trial_duration: fixation_dur, // Duration of fixation in milliseconds
-              response_ends_trial: false,
-              data: {type: 'fixation', block_num: block_num},
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: '<p class = "normal-text">+</p>',
+            choices: "NO_KEYS", // No keys allowed during fixation
+            trial_duration: fixation_dur, // Duration of fixation in milliseconds
+            response_ends_trial: false,
           },
           {
-          type: jsPsychHtmlKeyboardResponse,
-          stimulus: jsPsych.timelineVariable('sentence'),
-          choices: "NO_KEYS",
-          trial_duration: sentence_duration,
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: function(){
+              return `<p class = "sentence-stim"> ${jsPsych.timelineVariable('sentence')} </p>`
+            },
+            choices: "NO_KEYS",
+            trial_duration: sentence_duration,
           },
           {
-            type: jsPsychImageKeyboardResponse,
-            stimulus: function() {return'stimuli/imgs/' + jsPsych.timelineVariable('picture')},
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus_width: 800,
+            maintain_aspect_ratio: true,
+            stimulus: function() {
+              const picture_path = 'stimuli/imgs/' + jsPsych.timelineVariable('picture');
+              return `<div class = "picture-stim"><img src="${picture_path}"></div>`
+            },
+            prompt: '<p class = "normal-text">Ist das Bild passend zur Aussage?\n\n Ja = "D"             Nein "L"</p>',
             choices: possible_response_keys,
             trial_duration: picture_duration,
             response_ends_trial: true,
