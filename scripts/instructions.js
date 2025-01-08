@@ -9,11 +9,3 @@ var instructions = {
     button_label_next: "Weiter",
     button_label_previous: "Zurück",
 }
-
-
-const experiment_begins = {
-    type: jsPsychHtmlButtonResponse,
-    stimulus: `<div class = "normal-text">Die Übungsdurchgänge sind jetzt beendet. </br> Drücke weiterhin "D", wenn ein "D" präsentiert wird. </br> Drücke "L", wenn ein "L" präsentiert wird. </br> Aber drücke die Leertaste, wenn sich "D" und "L" nicht abwechseln.</div>`,
-    choices: ['Weiter'],
-    data: {type: 'instructions'},
-}

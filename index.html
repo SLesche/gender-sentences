@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <script src="jspsych/dist/jspsych.js"></script>
     <script src="jspsych/dist/plugin-html-keyboard-response.js"></script>
+    <script src="jspsych/dist/plugin-image-keyboard-response.js"></script>
     <script src="jspsych/dist/plugin-html-button-response.js"></script>
+    <script src="jspsych/dist/plugin-preload.js"></script>
     <script src="jspsych/dist/plugin-instructions.js"></script>
     <script src="jspsych/dist/plugin-survey.js"></script>
     <script src="jspsych/dist/plugin-survey-likert.js"></script>
@@ -21,179 +23,97 @@
   </head>
   <body></body>
   <script>
-    var available_stimuli;
-    // Initialize the available_stimuli object
-    Papa.parse('stimuli/available_stimuli.csv', {
+    // Function to set up the experiment after the CSV is loaded
+    function setupExperiment(stimulus_list) {   
+      console.log("Setting up experiment with stimulus list: ", stimulus_list);   
+      var trial_num = 0;
+      var block_num = 0;
+      var repeat_practice_now = 1;
+
+      console.log(stimulus_list[trial_num])
+      
+      // Read all files in the stimuli/imgs folder (run in Terminal)
+      //       Get-ChildItem -Recurse -Path .\stimuli\imgs\ -Include *.png, *.jpg, *.jpeg, *.gif | 
+      // ForEach-Object { $_.FullName.Replace($pwd.Path + '\', '') } | 
+      // ForEach-Object { "'$($_.Replace('\', '/'))'," }
+
+      const possible_images = [
+        'stimuli/imgs/astronauten_seilspringen_brunnen_frauen.jpg',
+        'stimuli/imgs/astronauten_seilspringen_brunnen_gemischt.jpg',
+        'stimuli/imgs/astronauten_seilspringen_brunnen_männer.jpg',
+        'stimuli/imgs/FS_kellner_liegen_supermarkt_frauen.jpg',
+        'stimuli/imgs/FS_kellner_liegen_supermarkt_gemischt.jpg',
+        'stimuli/imgs/FS_kellner_liegen_supermarkt_männer.jpg',
+        'stimuli/imgs/FS_maler_liegen_flugzeug_frauen.jpg',
+        'stimuli/imgs/FS_maler_liegen_flugzeug_gemischt.jpg',
+        'stimuli/imgs/FS_maler_liegen_flugzeug_männer.jpg',
+        'stimuli/imgs/FS_schwimmer_kaffeetrinken_vulkan_frauen.jpg',
+        'stimuli/imgs/FS_schwimmer_kaffeetrinken_vulkan_gemischt.jpg',
+        'stimuli/imgs/FS_schwimmer_kaffeetrinken_vulkan_männer.jpg',
+        'stimuli/imgs/kellner_laufen_flugzeug_frauen.jpg',
+        'stimuli/imgs/kellner_laufen_flugzeug_gemischt.jpg',
+        'stimuli/imgs/kellner_laufen_flugzeug_männer.jpg',
+        'stimuli/imgs/sportler_laufen_brunnen_frauen.jpg',
+        'stimuli/imgs/sportler_laufen_brunnen_gemischt.jpg',
+        'stimuli/imgs/sportler_laufen_brunnen_männer.jpg',
+      ];
+      var preload = {
+        type: jsPsychPreload,
+        images: possible_images,
+        message: function() {
+          return jsPsych.randomization.sampleWithReplacement(loading_messages, 1)
+        }
+      }
+
+      var sentence_picture_procedure = {
+        timeline: [
+          {
+              type: jsPsychHtmlKeyboardResponse,
+              stimulus: '<p class = "normal-text">+</p>',
+              choices: "NO_KEYS", // No keys allowed during fixation
+              trial_duration: fixation_dur, // Duration of fixation in milliseconds
+              response_ends_trial: false,
+              data: {type: 'fixation', block_num: block_num},
+          },
+          {
+          type: jsPsychHtmlKeyboardResponse,
+          stimulus: jsPsych.timelineVariable('sentence'),
+          choices: "NO_KEYS",
+          trial_duration: sentence_duration,
+          },
+          {
+            type: jsPsychImageKeyboardResponse,
+            stimulus: 'stimuli/imgs/' + jsPsych.timelineVariable('picture'),
+            choices: possible_response_keys,
+            trial_duration: picture_duration,
+            response_ends_trial: true,
+            post_trial_gap: rsi_duration,
+            on_finish: function(data) {
+                // Record accuracy and congruency
+                data.condition = jsPsych.timelineVariable('condition');
+                console.log(data.stimulus)
+            }
+          }
+        ],
+        timeline_variables: stimulus_list,
+        randomize_order: true
+      }
+
+      experiment_timeline = [instructions, sentence_picture_procedure];
+      jsPsych.run(experiment_timeline);
+    }
+
+    // Initialize the experiment after the CSV is loaded
+    Papa.parse('https://raw.githubusercontent.com/SLesche/gender-sentences/main/stimuli/available_stimuli.csv', {
       header: true,
-      // download: true,
-      // dynamicTyping: true,
+      download: true,
       complete: function(results) {
-        console.log(results.data);
-        available_stimuli = results.data;
+        let available_stimuli = results.data; // Assign the parsed data to available_stimuli
+
+        jsPsych.randomization.setSeed(subject_id); // Set seed for reproducibility
+        console.log(subject_id, available_stimuli);
+        setupExperiment(available_stimuli);  // Setup and start the experiment once the data is available
       }
     });
-
-    console.log(available_stimuli)
-
-    const display_order = get_random_trial_display_order(available_stimuli);
-    
-
-    var picture_trial = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus:  function(available_stimuli, display_order, trial_num){
-            return get_picture_stim(available_stimuli, display_order, trial_num);
-        },
-        choices: possible_response_keys,
-        stimulus_duration: picture_duration,
-        trial_duration: picture_duration,
-        response_ends_trial: true,
-        post_trial_gap: rsi_duration,
-        on_finish: function(data) {
-            // Record accuracy and congruency
-            // is accurate if the response is equal to the correct response, which is determined by the previous stimulus
-            data.is_target = is_target(data.stimulus);      
-            data.accuracy = data.response === get_correct(data.is_target) ? 1 : 0;
-            data.letter_stim = extract_stim_from_html(data.stimulus);
-            data.type = 'trial';
-            data.is_practice = block_num === 0 ? 1 : 0;
-            data.block_num = block_num;
-            data.trial_num = trial_num;
-        }
-    };
-
-    var sentence_trial = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus:  function(available_stimuli, display_order, trial_num){
-            return get_sentence_stim(available_stimuli, display_order, trial_num);
-        },
-        choices: "NO_KEYS",
-        stimulus_duration: sentence_duration,
-        trial_duration: sentence_duration,
-        response_ends_trial: false,
-    };
-
-    var feedback = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: function(){
-        const last_trial_correct = jsPsych.data.get().last(1).values()[0].accuracy;
-        const last_response = jsPsych.data.get().last(1).values()[0].response;
-        const last_is_repeat = jsPsych.data.get().last(1).values()[0].is_repeat;
-        if (last_trial_correct) {
-          return '<div class = "feedback-stim"><span style = "color: green">Richtig</span></div>'; 
-        } else if (last_response == null){
-          return '<div class = "feedback-stim"><span style = "color: red">Zu langsam!</span></div>'; 
-        } else {
-          return '<div class = "feedback-stim"><span style = "color: red">Falsch</span></div>'; 
-        }
-      },
-      choices: "NO_KEYS", // No keys allowed during fixation
-      trial_duration: feedback_dur, // Duration of fixation in milliseconds
-      response_ends_trial: false,
-      post_trial_gap: rsi_duration - feedback_dur - fixation_dur,
-      data: {type: 'feedback', block_num: block_num}
-    };
-
-    var fixation_cross = {
-        type: jsPsychHtmlKeyboardResponse,
-        stimulus: '<p class = "normal-text">+</p>',
-        choices: "NO_KEYS", // No keys allowed during fixation
-        trial_duration: fixation_dur, // Duration of fixation in milliseconds
-        response_ends_trial: false,
-        data: {type: 'fixation', block_num: block_num},
-    };
-
-    let trials = {
-        timeline: [fixation_cross, sentence_trial, picture_trial],
-        loop_function: function(data){
-            if (trial_num < n_trials){
-                trial_num ++;
-                return true;
-            } else {
-                trial_num = 0;
-                return false;
-            }
-        }
-    }
-
-    // Self paced break here
-    var maybe_blockbreak = {
-        timeline: [{
-        type: jsPsychHtmlButtonResponse,
-        stimulus: `<div class = "normal-text"><p>Kurze Pause. Drücke "Weiter", um fortzufahren.</p></div>`,
-        choices: ['Weiter'],
-        data: {type: 'instructions', block_num: block_num},
-        }],
-        conditional_function: function() {
-            return block_num !== n_blocks
-        }
-    }
-
-    let practice_trials = {
-        timeline: [fixation_cross, sentence_trial, picture_trial, feedback],
-        loop_function: function(data){
-            if (trial_num < n_practice){
-                trial_num ++;
-                return true;
-            } else {
-                trial_num = 0;
-                block_num = 1;
-                return false;
-            }
-        }
-    }
-    
-    let repeat_practice = {
-      type: jsPsychHtmlButtonResponse,
-      stimulus: `<div class = "normal-text"><p>Das waren die Übungsdurchgänge. Bist du bereit, das Experiment zu beginnen? </br> Drücke "Weiter" um fortzufahren und "Wiederholen" um nochmal zu üben.</p></div>`,
-      choices: ['Wiederholen', 'Weiter'],
-      data: {type: 'instructions', block_num: block_num},
-      on_finish: function(data){
-        if (data.response === 0){
-          repeat_practice_now = 1;
-        } else {
-          repeat_practice_now = 0;
-        }
-      }
-    }
-
-    var repeatable_practice = {
-      timeline: [practice_trials, repeat_practice],
-      loop_function: function() {
-        if (repeat_practice_now){
-          block_num = 0;
-          return true
-        } else {
-          return false
-        }
-      }
-    }
-
-    var experiment_countdown = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: `<div class = "normal-text"><p>Die Aufgabe beginnt in 3 Sekunden. Mache dich bereit mit "D" oder "L" zu antworten</p></div>`,
-      choices: "NO_KEYS",
-      trial_duration: 3000
-    }
-
-    let experiment_blocks = {
-        timeline: [experiment_countdown, trials, maybe_blockbreak],
-        loop_function: function(data){
-            if (block_num < n_blocks){
-                block_num ++;
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
-    var trial_num = 0;
-    var block_num = 0;
-    var repeat_practice_now = 1;
-
-    // survey trials missing
-    experiment_timeline = [instructions, repeatable_practice, experiment_begins, experiment_blocks, debriefing];
-    //experiment_timeline = [open_question, debriefing]
-    jsPsych.run(experiment_timeline);
   </script>
 </html>
