@@ -57,6 +57,7 @@
         'stimuli/imgs/sportler_laufen_brunnen_gemischt.jpg',
         'stimuli/imgs/sportler_laufen_brunnen_männer.jpg',
       ];
+      
       var preload = {
         type: jsPsychPreload,
         images: possible_images,
@@ -83,7 +84,7 @@
           },
           {
             type: jsPsychImageKeyboardResponse,
-            stimulus: 'stimuli/imgs/' + jsPsych.timelineVariable('picture'),
+            stimulus: function() {return'stimuli/imgs/' + jsPsych.timelineVariable('picture')},
             choices: possible_response_keys,
             trial_duration: picture_duration,
             response_ends_trial: true,
@@ -91,7 +92,6 @@
             on_finish: function(data) {
                 // Record accuracy and congruency
                 data.condition = jsPsych.timelineVariable('condition');
-                console.log(data.stimulus)
             }
           }
         ],
