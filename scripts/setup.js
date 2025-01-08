@@ -24,11 +24,11 @@ const n_blocks = 1;
 const n_practice = 3;
 const possible_response_keys = ["d", "l", " "];
 
-const trial_duration = 1000;
-const stim_duration = 200;
-const feedback_dur = 400;
+const picture_duration = 5000;
+const sentence_duration = 3000;
+const feedback_dur = 500;
 const fixation_dur = 200;
-const rsi_duration = 500;
+const rsi_duration = 1000;
 
 // Remove later
 var subject_number = jsPsych.randomization.randomID(6);

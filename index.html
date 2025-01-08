@@ -17,18 +17,35 @@
     <script src="scripts/instructions.js"></script>
     <script src="scripts/task.js"></script>
     <script src="scripts/debriefing.js"></script>
+    <script src = "https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
   </head>
   <body></body>
   <script>
+    var available_stimuli;
+    // Initialize the available_stimuli object
+    Papa.parse('stimuli/available_stimuli.csv', {
+      header: true,
+      // download: true,
+      // dynamicTyping: true,
+      complete: function(results) {
+        console.log(results.data);
+        available_stimuli = results.data;
+      }
+    });
+
+    console.log(available_stimuli)
+
+    const display_order = get_random_trial_display_order(available_stimuli);
+    
+
     var picture_trial = {
         type: jsPsychHtmlKeyboardResponse,
-        full_stimulus:  function(){
-            return get_random_stimulus();
+        stimulus:  function(available_stimuli, display_order, trial_num){
+            return get_picture_stim(available_stimuli, display_order, trial_num);
         },
-        stimulus: full_stimulus.picture,
         choices: possible_response_keys,
-        stimulus_duration: stim_duration,
-        trial_duration: trial_duration,
+        stimulus_duration: picture_duration,
+        trial_duration: picture_duration,
         response_ends_trial: true,
         post_trial_gap: rsi_duration,
         on_finish: function(data) {
@@ -46,26 +63,13 @@
 
     var sentence_trial = {
         type: jsPsychHtmlKeyboardResponse,
-        full_stimulus:  function(){
-            return get_random_stimulus();
+        stimulus:  function(available_stimuli, display_order, trial_num){
+            return get_sentence_stim(available_stimuli, display_order, trial_num);
         },
-        stimulus: full_stimulus.sentence,
-        choices: possible_response_keys,
-        stimulus_duration: stim_duration,
-        trial_duration: trial_duration,
-        response_ends_trial: true,
-        post_trial_gap: rsi_duration,
-        on_finish: function(data) {
-            // Record accuracy and congruency
-            // is accurate if the response is equal to the correct response, which is determined by the previous stimulus
-            data.is_target = is_target(data.stimulus);      
-            data.accuracy = data.response === get_correct(data.is_target) ? 1 : 0;
-            data.letter_stim = extract_stim_from_html(data.stimulus);
-            data.type = 'trial';
-            data.is_practice = block_num === 0 ? 1 : 0;
-            data.block_num = block_num;
-            data.trial_num = trial_num;
-        }
+        choices: "NO_KEYS",
+        stimulus_duration: sentence_duration,
+        trial_duration: sentence_duration,
+        response_ends_trial: false,
     };
 
     var feedback = {
@@ -115,7 +119,7 @@
     var maybe_blockbreak = {
         timeline: [{
         type: jsPsychHtmlButtonResponse,
-        stimulus: `<div class = "normal-text"><p>Kurze Pause. Drücke "Weiter", um fortzufahren.</p></br>${condition_instruction}</div>`,
+        stimulus: `<div class = "normal-text"><p>Kurze Pause. Drücke "Weiter", um fortzufahren.</p></div>`,
         choices: ['Weiter'],
         data: {type: 'instructions', block_num: block_num},
         }],

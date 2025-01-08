@@ -1,32 +1,48 @@
-function get_random_stimulus(){
-    const stim = Math.random() > 0.5 ? possible_stimuli[0] : possible_stimuli[1];
-    return `<p class = "rat-stim">${stim}</p>`;
-}
-function get_alternate_stimulus(){
-    let previous_stim = null;
-    if (jsPsych.data.get().filter([{type: 'trial'}]).last(1).values()[0] == null | trial_num === 0){
-          previous_stim = possible_stimuli[0];
-    } else {
-          previous_stim = jsPsych.data.get().filter([{type: 'trial'}]).last(1).values()[0].stimulus;
-    }  
-    alternate_stim = possible_stimuli.find(item => item !== extract_stim_from_html(previous_stim));
-    return `<p class = "rat-stim">${alternate_stim}</p>`
+function get_random_trial_display_order(available_stimuli){
+    const n_trials = available_stimuli.length;
+
+    // create array from 0 to n
+    let display_order = Array.from({length: n_trials}, (_, i) => i);
+    display_order = jsPsych.randomization.shuffle(display_order);
+
+    return display_order;
 }
 
-function extract_stim_from_html(string){
-    var match = /<p class = "rat-stim">(.+)<\/p>/i.exec(string);
-    return match ? match[1] : null;
+function get_picture_stim(available_stimuli, display_order, trial_num){
+    const stim = available_stimuli[display_order[trial_num]];
+    return stim;
 }
 
-function get_random_repeat(){
-    return Math.random() > 0.5 ? 0 : 1;
+function get_sentence_stim(available_stimuli, display_order, trial_num){
+    const stim = available_stimuli[display_order[trial_num]];
+    return stim;
 }
 
-function get_correct(stim, is_repeat){
-    if (is_repeat){
-        return correct = " ";
-    } else {
-        const central_stim = extract_stim_from_html(stim);
-        return correct = central_stim.toLowerCase();
-    }
+function csvFileToObject(filePath) {
+    return new Promise((resolve, reject) => {
+        fetch(filePath)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text();  // Read the response as text
+            })
+            .then(csvData => {
+                // Parse the CSV data with PapaParse
+                Papa.parse(csvData, {
+                    header: true,           // Use headers from the first row
+                    dynamicTyping: true,    // Automatically convert types (e.g., strings to numbers)
+                    skipEmptyLines: true,   // Skip empty lines
+                    complete: function(results) {
+                        resolve(results.data);  // Resolve the parsed data as an array of objects
+                    },
+                    error: function(error) {
+                        reject(new Error('Error parsing CSV: ' + error.message));  // Reject on error
+                    }
+                });
+            })
+            .catch(error => {
+                reject(new Error('Error fetching file: ' + error.message));  // Reject if there was an error fetching the file
+            });
+    });
 }
