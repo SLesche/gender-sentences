@@ -1,3 +1,45 @@
+function select_trials(stimulus_list){
+  // From stimulus list, select n_trials_per_conditions for each condition
+  // and n_practice_trials for practice trials
+
+  // Extract unique sentence IDs
+    let possible_sentence_ids = [...new Set(stimulus_list.map(row => row.sentence_id))];
+
+    console.log("Sentence_ids", possible_sentence_ids)
+    // Get unique picture conditions for this sentence_id
+    let pictureConditions = [...new Set(stimulus_list.map(row => row.picture_condition))];
+
+    // Get unique sentence conditions for this sentence_id
+    let sentenceConditions = [...new Set(stimulus_list.map(row => row.sentence_condition))];
+
+    // Create an array to store the selected rows
+    let selectedRows = [];
+
+    possible_sentence_ids.forEach(sentence_id => {
+      // Filter rows for the current sentence_id
+      let rowsForSentence = stimulus_list.filter(row => row.sentence_id === sentence_id);
+
+      // Randomly select one picture condition and one sentence condition
+      let randomPictureCondition = pictureConditions[Math.floor(Math.random() * pictureConditions.length)];
+      let randomSentenceCondition = sentenceConditions[Math.floor(Math.random() * sentenceConditions.length)];
+
+      // Find the row that matches all conditions
+      let selectedRow = rowsForSentence.find(row =>
+        row.picture_condition === randomPictureCondition &&
+        row.sentence_condition === randomSentenceCondition
+      );
+
+      // Add the selected row to the results
+      if (selectedRow) {
+        selectedRows.push(selectedRow);
+      }
+    });
+
+    console.log(selectedRows); // This contains the selected rows for each sentence_id
+
+    return(selectedRows);
+
+}
 const loading_messages = [
     "Reticulating splines...",
     "Generating witty dialog...",

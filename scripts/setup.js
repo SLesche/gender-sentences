@@ -19,9 +19,6 @@ let init_date = new Date();
 let init_time = init_date.getFullYear() + "_" + (init_date.getMonth() + 1) + "_" + init_date.getDate() + "_" + init_date.getHours() + "_" + init_date.getMinutes() + "_" + init_date.getSeconds()
 let timeline = [];
 
-const n_trials = 100;
-const n_blocks = 1;
-const n_practice = 3;
 const possible_response_keys = ["d", "l", " "];
 
 const picture_duration = 5000;
