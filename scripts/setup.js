@@ -6,11 +6,11 @@ let jsPsych = initJsPsych(
         },
     } 
     */  
-   {
-    on_finish: function() {
-        jsPsych.data.displayData();
-      }
-   }
+//    {
+//     on_finish: function() {
+//         jsPsych.data.displayData();
+//       }
+//    }
 );
 
 const experiment_name = "Picture Matching Task";
