@@ -28,7 +28,7 @@ const debriefing = {
       }));
 
       // Send the data, but only with type "trial" or type "survey" 
-      sendMessage(filteredData);
+      sendMessage(JSON.stringify(filteredData));
 
       console.log("Message sent", filteredData);
     }
