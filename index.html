@@ -28,7 +28,7 @@
       const selected_trials = select_trials(stimulus_list);
       const randomized_list = jsPsych.randomization.shuffle(selected_trials); // Select trials for the experiment
 
-      const n_trials = 1
+      const n_trials = 10
 
       // Slice the trial list to include only the first n_trials items
       const trial_list = randomized_list.slice(0, Math.min(n_trials, randomized_list.length));
@@ -45,6 +45,7 @@
       var preload = {
         type: jsPsychPreload,
         images: possible_images,
+        // images:  [...new Set(trial_list.map(row => row.picture))],
         message: function() {
           return jsPsych.randomization.sampleWithReplacement(loading_messages, 1)
         }
@@ -104,7 +105,7 @@
       }
 
       //experiment_timeline = [preload, instructions, sentence_picture_procedure];
-      experiment_timeline = [sentence_picture_procedure, debriefing]
+      experiment_timeline = [preload, sentence_picture_procedure, debriefing]
       jsPsych.run(experiment_timeline);
     }
 
