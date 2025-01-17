@@ -25,13 +25,17 @@
   <script>
     // Function to set up the experiment after the CSV is loaded
     function setupExperiment(stimulus_list) {   
-      const selected_trials = jsPsych.randomization.shuffle(stimulus_list); // Select trials for the experiment
-      console.log("Setting up experiment with stimulus list: ", selected_trials);   
+      const selected_trials = select_trials(stimulus_list);
+      const randomized_list = jsPsych.randomization.shuffle(selected_trials); // Select trials for the experiment
+
+      const n_trials = 1
+
+      // Slice the trial list to include only the first n_trials items
+      const trial_list = randomized_list.slice(0, Math.min(n_trials, randomized_list.length));
+
       var trial_num = 0;
       var block_num = 0;
       var repeat_practice_now = 1;
-
-      console.log(stimulus_list[trial_num])
       
       // Read all files in the stimuli/imgs folder (run in Terminal)
       //       Get-ChildItem -Recurse -Path .\stimuli\imgs\ -Include *.png, *.jpg, *.jpeg, *.gif | 
@@ -78,15 +82,29 @@
             post_trial_gap: rsi_duration,
             on_finish: function(data) {
                 // Record accuracy and congruency
-                data.condition = jsPsych.timelineVariable('condition');
+                data.is_target = jsPsych.timelineVariable('condition');
+                data.picture = jsPsych.timelineVariable('picture');
+                data.picture_condition = jsPsych.timelineVariable('picture_gender');
+                data.sentence = jsPsych.timelineVariable('sentence');
+                data.sentence_condition = jsPsych.timelineVariable('sentence_gender');
+
+                // Check if the response was correct
+                let correct_response = 0;
+                if (data.is_target == "Target"){
+                  correct_response = "d";
+                } else {
+                  correct_response = "l";
+                }
+
+                data.acc = (data.response == correct_response) ? 1 : 0;
             }
           }
         ],
-        timeline_variables: stimulus_list,
+        timeline_variables: trial_list,
         randomize_order: true
       }
 
-      experiment_timeline = [instructions, sentence_picture_procedure];
+      experiment_timeline = [preload, instructions, sentence_picture_procedure];
       jsPsych.run(experiment_timeline);
     }
 
@@ -98,7 +116,6 @@
         let available_stimuli = results.data; // Assign the parsed data to available_stimuli
 
         jsPsych.randomization.setSeed(subject_id); // Set seed for reproducibility
-        console.log(subject_id, available_stimuli);
         setupExperiment(available_stimuli);  // Setup and start the experiment once the data is available
       }
     });
