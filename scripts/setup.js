@@ -11,6 +11,7 @@ let jsPsych = initJsPsych(
 //         jsPsych.data.displayData();
 //       }
 //    }
+  
 );
 
 const experiment_name = "Picture Matching Task";

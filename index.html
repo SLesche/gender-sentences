@@ -36,20 +36,24 @@
       var trial_num = 0;
       var block_num = 0;
       var repeat_practice_now = 1;
-      
+
+      const included_imgs = [...new Set(trial_list.map(row => `stimuli/imgs/${row.picture}`))]
+      // console.log("The following images are not present:", included_imgs.filter(img => !possible_images.includes(img)))
+
       // Read all files in the stimuli/imgs folder (run in Terminal)
       //       Get-ChildItem -Recurse -Path .\stimuli\imgs\ -Include *.png, *.jpg, *.jpeg, *.gif | 
       // ForEach-Object { $_.FullName.Replace($pwd.Path + '\', '') } | 
       // ForEach-Object { "'$($_.Replace('\', '/'))'," } > stimuli/imgs.txt
       
+      // Preload only pictures from trial_list.picture, with "stimuli/imgs/" prepended
       var preload = {
         type: jsPsychPreload,
-        images: possible_images,
-        // images:  [...new Set(trial_list.map(row => row.picture))],
+        images: possible_images.filter(img => included_imgs.includes(img)),
         message: function() {
-          return jsPsych.randomization.sampleWithReplacement(loading_messages, 1)
+          return jsPsych.randomization.sampleWithReplacement(loading_messages, 1);
         }
-      }
+      };
+
 
       var sentence_picture_procedure = {
         timeline: [
