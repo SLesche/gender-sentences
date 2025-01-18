@@ -50,7 +50,8 @@
         type: jsPsychPreload,
         images: possible_images.filter(img => included_imgs.includes(img)),
         message: function() {
-          return jsPsych.randomization.sampleWithReplacement(loading_messages, 1);
+          // return jsPsych.randomization.sampleWithReplacement(loading_messages, 1);
+          return "Vorbereitung der KI-generierten Bilder. Wir bitten um etwas Geduld.";
         }
       };
 
