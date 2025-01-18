@@ -17,6 +17,8 @@ const debriefing = {
 
       // Extract only the desired values
       const filteredData = trialData.trials.map(row => ({
+        trial_num: row.trial_num,
+        block_num: row.block_num,
         sentence: row.sentence,
         picture: row.picture,
         picture_condition: row.picture_condition,
