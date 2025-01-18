@@ -6,10 +6,10 @@ function select_trials(stimulus_list){
     let possible_sentence_ids = [...new Set(stimulus_list.map(row => row.sentence_id))];
 
     // Get unique picture conditions for this sentence_id
-    let pictureConditions = [...new Set(stimulus_list.map(row => row.picture_condition))];
+    let pictureConditions = [...new Set(stimulus_list.map(row => row.picture_gender))];
 
     // Get unique sentence conditions for this sentence_id
-    let sentenceConditions = [...new Set(stimulus_list.map(row => row.sentence_condition))];
+    let sentenceConditions = [...new Set(stimulus_list.map(row => row.sentence_gender))];
 
     // Create an array to store the selected rows
     let selectedRows = [];
@@ -24,8 +24,8 @@ function select_trials(stimulus_list){
 
       // Find the row that matches all conditions
       let selectedRow = rowsForSentence.find(row =>
-        row.picture_condition === randomPictureCondition &&
-        row.sentence_condition === randomSentenceCondition
+        row.picture_gender === randomPictureCondition &&
+        row.sentence_gender === randomSentenceCondition
       );
 
       // Add the selected row to the results

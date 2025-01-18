@@ -37,7 +37,8 @@
       var block_num = 0;
       var repeat_practice_now = 1;
 
-      const included_imgs = [...new Set(trial_list.map(row => `stimuli/imgs/${row.picture}`))]
+      const included_imgs = [...new Set(trial_list.map(row => `stimuli/imgs/${row.picture}`))];
+
       // console.log("The following images are not present:", included_imgs.filter(img => !possible_images.includes(img)))
 
       // Read all files in the stimuli/imgs folder (run in Terminal)
@@ -48,7 +49,7 @@
       // Preload only pictures from trial_list.picture, with "stimuli/imgs/" prepended
       var preload = {
         type: jsPsychPreload,
-        images: possible_images.filter(img => included_imgs.includes(img)),
+        images: included_imgs,
         message: function() {
           // return jsPsych.randomization.sampleWithReplacement(loading_messages, 1);
           return "Vorbereitung der KI-generierten Bilder. Wir bitten um etwas Geduld.";
