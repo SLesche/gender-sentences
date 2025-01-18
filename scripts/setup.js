@@ -28,9 +28,7 @@ const possible_response_keys = ["d", "l", " "];
 
 const picture_duration = 50;
 const sentence_duration = 20;
-const feedback_dur = 800;
-const fixation_dur = 600;
-const rsi_duration = 1000;
+const fixation_dur = 6;
 
 // Remove later
 const subject_id = jsPsych.randomization.randomID(6);
