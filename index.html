@@ -39,7 +39,7 @@
         row.block_num = Math.floor(index / 10);
         return row;
       });
-      
+
       var trial_num = 0;
       var block_num = 0;
       var repeat_practice_now = 1;
@@ -100,6 +100,9 @@
                 data.picture_condition = jsPsych.timelineVariable('picture_gender');
                 data.sentence = jsPsych.timelineVariable('sentence');
                 data.sentence_condition = jsPsych.timelineVariable('sentence_gender');
+                data.trial_num = jsPsych.timelineVariable('trial_num');
+                data.block_num = jsPsych.timelineVariable('block_num');
+                data.sentence_id = jsPsych.timelineVariable('sentence_id');
 
                 // Check if the response was correct
                 let correct_response = 0;

@@ -19,6 +19,7 @@ const debriefing = {
       const filteredData = trialData.trials.map(row => ({
         trial_num: row.trial_num,
         block_num: row.block_num,
+        sentence_id: row.sentence_id,
         sentence: row.sentence,
         picture: row.picture,
         picture_condition: row.picture_condition,
