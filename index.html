@@ -28,7 +28,7 @@
       const selected_trials = select_trials(stimulus_list);
       const randomized_list = jsPsych.randomization.shuffle(selected_trials); // Select trials for the experiment
 
-      const n_trials = 10
+      const n_trials = 90
 
       // Slice the trial list to include only the first n_trials items
       const trial_list = randomized_list.slice(0, Math.min(n_trials, randomized_list.length));
