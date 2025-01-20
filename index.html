@@ -40,6 +40,14 @@
         return row;
       });
 
+      // Split this in three thirds
+      const n_thirds = 3;
+      const third_length = Math.floor(n_trials / n_thirds);
+
+      const third_1 = trial_list.slice(0, third_length);
+      const third_2 = trial_list.slice(third_length, 2 * third_length);
+      const third_3 = trial_list.slice(2 * third_length, 3 * third_length);
+
       var trial_num = 0;
       var block_num = 0;
       var repeat_practice_now = 1;
@@ -64,7 +72,7 @@
       };
 
 
-      var sentence_picture_procedure = {
+      var sentence_picture_procedure_1 = {
         timeline: [
           {
             type: jsPsychHtmlKeyboardResponse,
@@ -116,12 +124,138 @@
             }
           }
         ],
-        timeline_variables: trial_list,
+        timeline_variables: third_1,
         randomize_order: false
       }
 
+      var sentence_picture_procedure_2 = {
+        timeline: [
+          {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: '<p class = "sentence-stim">+</p>',
+            choices: "NO_KEYS", // No keys allowed during fixation
+            trial_duration: fixation_dur, // Duration of fixation in milliseconds
+            response_ends_trial: false,
+          },
+          {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: function(){
+              return `<p class = "sentence-stim"> ${jsPsych.timelineVariable('sentence')} </p>`
+            },
+            choices: "NO_KEYS",
+            trial_duration: sentence_duration,
+          },
+          {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: function() {
+              const picture_path = 'stimuli/imgs/' + jsPsych.timelineVariable('picture');
+              return `<div class="picture-stim"><img src="${picture_path}" class="stimulus-image"></div>`;
+            },
+            prompt: '<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "D"</span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "L"</span></p>',
+            choices: possible_response_keys,
+            trial_duration: picture_duration,
+            response_ends_trial: true,
+            post_trial_gap: iti_duration,
+            on_finish: function(data) {
+                // Record accuracy and congruency
+                data.type = 'trial';
+                data.is_target = jsPsych.timelineVariable('condition');
+                data.picture = jsPsych.timelineVariable('picture');
+                data.picture_condition = jsPsych.timelineVariable('picture_gender');
+                data.sentence = jsPsych.timelineVariable('sentence');
+                data.sentence_condition = jsPsych.timelineVariable('sentence_gender');
+                data.trial_num = jsPsych.timelineVariable('trial_num');
+                data.block_num = jsPsych.timelineVariable('block_num');
+                data.sentence_id = jsPsych.timelineVariable('sentence_id');
+
+                // Check if the response was correct
+                let correct_response = 0;
+                if (data.is_target == "Target"){
+                  correct_response = "d";
+                } else {
+                  correct_response = "l";
+                }
+
+                data.acc = (data.response == correct_response) ? 1 : 0;
+            }
+          }
+        ],
+        timeline_variables: third_2,
+        randomize_order: false
+      }
+
+      var sentence_picture_procedure_3 = {
+        timeline: [
+          {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: '<p class = "sentence-stim">+</p>',
+            choices: "NO_KEYS", // No keys allowed during fixation
+            trial_duration: fixation_dur, // Duration of fixation in milliseconds
+            response_ends_trial: false,
+          },
+          {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: function(){
+              return `<p class = "sentence-stim"> ${jsPsych.timelineVariable('sentence')} </p>`
+            },
+            choices: "NO_KEYS",
+            trial_duration: sentence_duration,
+          },
+          {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: function() {
+              const picture_path = 'stimuli/imgs/' + jsPsych.timelineVariable('picture');
+              return `<div class="picture-stim"><img src="${picture_path}" class="stimulus-image"></div>`;
+            },
+            prompt: '<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "D"</span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "L"</span></p>',
+            choices: possible_response_keys,
+            trial_duration: picture_duration,
+            response_ends_trial: true,
+            post_trial_gap: iti_duration,
+            on_finish: function(data) {
+                // Record accuracy and congruency
+                data.type = 'trial';
+                data.is_target = jsPsych.timelineVariable('condition');
+                data.picture = jsPsych.timelineVariable('picture');
+                data.picture_condition = jsPsych.timelineVariable('picture_gender');
+                data.sentence = jsPsych.timelineVariable('sentence');
+                data.sentence_condition = jsPsych.timelineVariable('sentence_gender');
+                data.trial_num = jsPsych.timelineVariable('trial_num');
+                data.block_num = jsPsych.timelineVariable('block_num');
+                data.sentence_id = jsPsych.timelineVariable('sentence_id');
+
+                // Check if the response was correct
+                let correct_response = 0;
+                if (data.is_target == "Target"){
+                  correct_response = "d";
+                } else {
+                  correct_response = "l";
+                }
+
+                data.acc = (data.response == correct_response) ? 1 : 0;
+            }
+          }
+        ],
+        timeline_variables: third_3,
+        randomize_order: false
+      }
+
+      var block_break_1 = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '<p class = "normal-text">Kurze Pause. Sie haben schon 1/3 der Aufgabe geschafft. Drücken Sie eine beliebige Taste, um fortzufahren. <br> Bitte bleiben sie weiterhin konzentriert und arbeiten Sie so schnell und genau wie möglich.</p>',
+        choices: "ALL_KEYS",
+        response_ends_trial: true,
+      }
+
+      var block_break_2 = {
+        type: jsPsychHtmlKeyboardResponse,
+        stimulus: '<p class = "normal-text">Kurze Pause. Sie haben schon 2/3 der Aufgabe geschafft. Drücken Sie eine beliebige Taste, um fortzufahren. <br> Bitte bleiben sie weiterhin konzentriert und arbeiten Sie so schnell und genau wie möglich.</p>',
+        choices: "ALL_KEYS",
+        response_ends_trial: true,
+      }
+
       //experiment_timeline = [preload, instructions, sentence_picture_procedure];
-      experiment_timeline = [preload, sentence_picture_procedure, debriefing]
+      experiment_timeline = [preload, sentence_picture_procedure_1, block_break_1, sentence_picture_procedure_2, block_break_2, sentence_picture_procedure_3, debriefing]
       jsPsych.run(experiment_timeline);
     }
 
