@@ -33,6 +33,8 @@
       // Slice the trial list to include only the first n_trials items
       var trial_list = randomized_list.slice(0, Math.min(n_trials, randomized_list.length));
 
+      console.log(randomized_list)
+      console.log(trial_list)
       // Add trial num and artificial block number here
       trial_list = trial_list.map((row, index) => {
         row.trial_num = index;
@@ -117,7 +119,7 @@
           }
         ],
         timeline_variables: trial_list,
-        randomize_order: true
+        randomize_order: false
       }
 
       //experiment_timeline = [preload, instructions, sentence_picture_procedure];

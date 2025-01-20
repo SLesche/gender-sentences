@@ -3,13 +3,13 @@ function select_trials(stimulus_list){
   // and n_practice_trials for practice trials
 
   // Extract unique sentence IDs
-    let possible_sentence_ids = [...new Set(stimulus_list.map(row => row.sentence_id))];
+    let possible_sentence_ids = [...new Set(stimulus_list.map(row => row.sentence_id))].filter(id => id !== undefined);
 
     // Get unique picture conditions for this sentence_id
-    let pictureConditions = [...new Set(stimulus_list.map(row => row.picture_gender))];
+    let pictureConditions = [...new Set(stimulus_list.map(row => row.picture_gender))].filter(condition => condition !== undefined);
 
     // Get unique sentence conditions for this sentence_id
-    let sentenceConditions = [...new Set(stimulus_list.map(row => row.sentence_gender))];
+    let sentenceConditions = [...new Set(stimulus_list.map(row => row.sentence_gender))].filter(condition => condition !== undefined);
 
     // Create an array to store the selected rows
     let selectedRows = [];
@@ -22,6 +22,7 @@ function select_trials(stimulus_list){
       let randomPictureCondition = pictureConditions[Math.floor(Math.random() * pictureConditions.length)];
       let randomSentenceCondition = sentenceConditions[Math.floor(Math.random() * sentenceConditions.length)];
 
+      console.log(randomPictureCondition, randomSentenceCondition);
       // Find the row that matches all conditions
       let selectedRow = rowsForSentence.find(row =>
         row.picture_gender === randomPictureCondition &&
@@ -33,6 +34,7 @@ function select_trials(stimulus_list){
         selectedRows.push(selectedRow);
       }
     });
+
     selectedRows = selectedRows.filter(row => row.picture !== '');
 
     return(selectedRows);
