@@ -22,7 +22,6 @@ function select_trials(stimulus_list){
       let randomPictureCondition = pictureConditions[Math.floor(Math.random() * pictureConditions.length)];
       let randomSentenceCondition = sentenceConditions[Math.floor(Math.random() * sentenceConditions.length)];
 
-      console.log(randomPictureCondition, randomSentenceCondition);
       // Find the row that matches all conditions
       let selectedRow = rowsForSentence.find(row =>
         row.picture_gender === randomPictureCondition &&
