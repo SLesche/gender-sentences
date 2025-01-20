@@ -27,10 +27,10 @@ let timeline = [];
 
 const possible_response_keys = ["d", "l", " "];
 
-const picture_duration = 5000;
-const sentence_duration = 2000;
-const fixation_dur = 600;
-const iti_duration = 1000;
+const picture_duration = 50;
+const sentence_duration = 20;
+const fixation_dur = 6;
+const iti_duration = 10;
 
 // Remove later
 const subject_id = jsPsych.randomization.randomID(6);
