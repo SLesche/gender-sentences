@@ -97,7 +97,8 @@
             },
             prompt: '<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "D"</span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "L"</span></p>',
             choices: possible_response_keys,
-            trial_duration: picture_duration,
+            stimulus_duration: picture_duration,
+            trial_duration: max_response_time,
             response_ends_trial: true,
             post_trial_gap: iti_duration,
             on_finish: function(data) {

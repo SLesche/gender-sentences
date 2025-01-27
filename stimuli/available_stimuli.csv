@@ -29,9 +29,9 @@ TS_kinobesucher_lesen_burg_gemischt.jpg;Target;Die Kinobesucher lesen in der Bur
 TS_kinobesucher_lesen_burg_frauen.jpg;Target;Die Kinobesucher*innen lesen in der Burg.;;;gen_star;women;5
 TS_kinobesucher_lesen_burg_männer.jpg;Target;Die Kinobesucher*innen lesen in der Burg.;;;gen_star;men;5
 TS_kinobesucher_lesen_burg_gemischt.jpg;Target;Die Kinobesucher*innen lesen in der Burg.;;;gen_star;mixed;5
-TS_köche_liegen_vulkan_frauen.jpg;Target;Die Köche vor einem Vulkan.;;;gen_masc;women;6
-TS_köche_liegen_vulkan_männer.jpg;Target;Die Köche vor einem Vulkan.;;;gen_masc;men;6
-TS_köche_liegen_vulkan_gemischt.jpg;Target;Die Köche vor einem Vulkan.;;;gen_masc;mixed;6
+TS_köche_liegen_vulkan_frauen.jpg;Target;Die Köche liegen vor einem Vulkan.;;;gen_masc;women;6
+TS_köche_liegen_vulkan_männer.jpg;Target;Die Köche liegen vor einem Vulkan.;;;gen_masc;men;6
+TS_köche_liegen_vulkan_gemischt.jpg;Target;Die Köche liegen vor einem Vulkan.;;;gen_masc;mixed;6
 TS_köche_liegen_vulkan_frauen.jpg;Target;Die Köch*innen liegen vor einem Vulkan.;;;gen_star;women;6
 TS_köche_liegen_vulkan_männer.jpg;Target;Die Köch*innen liegen vor einem Vulkan.;;;gen_star;men;6
 TS_köche_liegen_vulkan_gemischt.jpg;Target;Die Köch*innen liegen vor einem Vulkan.;;;gen_star;mixed;6
