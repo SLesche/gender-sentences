@@ -37,8 +37,10 @@ const feedback_dur = 1000;
 // Remove later
 const subject_id = jsPsych.randomization.randomID(6);
 
-const target_key = subject_id % 2 == 0 ? "d" : "l";
-const non_target_key = subject_id % 2 == 0 ? "l" : "d";
+const target_key = "d";
+const non_target_key = "l";
+// const target_key = subject_id % 2 == 0 ? "d" : "l";
+// const non_target_key = subject_id % 2 == 0 ? "l" : "d";
 
 // record the condition assignment in the jsPsych data
 // this adds a property called 'subject' and a property called 'condition' to every trial
