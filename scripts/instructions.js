@@ -1,8 +1,18 @@
-var instructions = {
+var practice_instructions = {
     type: jsPsychInstructions,
     pages: [
-            '<div class = "normal-text"><p>Du wirst gleich eine Reaktionszeitaufgabe bearbeiten. Manche Teilnehmende sind darin deutlich schlechter als andere.</p><p>Heute hast du die Möglichkeit zu beweisen, dass du nicht zu den Schlechtesten gehörst.</p><p>Mache so wenig Fehler wie möglich</p></div>',
-            '<div class = "normal-text">Drücke "D", wenn ein "D" präsentiert wird. </br> Drücke "L", wenn ein "L" präsentiert wird. </br> "D" und "L" wechseln sich meistens ab. Wenn sie sich nicht abwechseln, also z.B. ein "D" nach einem "D" präsentiert wird, drücke die Leertaste. </br> Im Folgenden wird kurz die Präsentation von "D" und "L" geübt.</div>',
+            '<div class = "normal-text"><p>Es folgen 5 Übungsdurchgänge, die dir zeigen sollen wie die Aufgabe aufgebaut ist. Hier erhältst du nach jeder Antwort Feedback.</p></div>',
+        ],
+    show_clickable_nav: true, 
+    data: {type: 'instructions'},
+    button_label_next: "Weiter",
+    button_label_previous: "Zurück",
+}
+
+var experiment_instructions = {
+    type: jsPsychInstructions,
+    pages: [
+            '<div class = "normal-text"><p>Nun geht es richtig los. Du erhältst kein Feedback mehr. Antworte so schnell und genau wie möglich.</p></div>',
         ],
     show_clickable_nav: true, 
     data: {type: 'instructions'},

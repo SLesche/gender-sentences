@@ -53,6 +53,24 @@
       var repeat_practice_now = 1;
 
       const included_imgs = [...new Set(trial_list.map(row => `stimuli/imgs/${row.picture}`))];
+      const prac_imgs = [
+        "stimuli/practice_imgs/FS_köche_essen_brunnen_männer.jpg",
+        "stimuli/practice_imgs/TS_maler_kaffeetrinken_flugzeug_gemischt.jpg",
+        "stimuli/practice_imgs/FS_maler_schachspielen_zug_frauen.jpg",
+        "stimuli/practice_imgs/TS_kellner_seilspringen_vulkan_männer.jpg",
+        "stimuli/practice_imgs/TS_sportler_essen_brunnen_gemischt.jpg",
+      ];
+
+      const prac_trials_list = [
+        {sentence: "Die Köche essen vor dem Brunnen.", picture: "FS_köche_essen_brunnen_männer.jpg", condition: "Filler"},
+        {sentence: "Die Maler trinken Kaffee im Flugzeug.", picture: "TS_maler_kaffeetrinken_flugzeug_gemischt.jpg", condition: "Target"},
+        {sentence: "Die Maler spielen Schach im Zug.", picture: "FS_maler_schachspielen_zug_frauen.jpg", condition: "Filler"},
+        {sentence: "Die Kellner*innen springen Seil auf dem Vulkan.", picture: "TS_kellner_seilspringen_vulkan_männer.jpg", condition: "Target"},
+        {sentence: "Die Sportler*innen essen vor dem Brunnen.", picture: "TS_sportler_essen_brunnen_gemischt.jpg", condition: "Target"}
+      ];
+
+      console.log(prac_trials_list)
+      console.log(trial_list)
 
       // console.log("The following images are not present:", included_imgs.filter(img => !possible_images.includes(img)))
 
@@ -64,13 +82,83 @@
       // Preload only pictures from trial_list.picture, with "stimuli/imgs/" prepended
       var preload = {
         type: jsPsychPreload,
-        images: included_imgs,
+        images: [included_imgs, prac_imgs],
         message: function() {
           // return jsPsych.randomization.sampleWithReplacement(loading_messages, 1);
           return "Vorbereitung der KI-generierten Bilder. Wir bitten um etwas Geduld.";
         }
       };
 
+      var practice_trials = {
+        timeline: [
+          {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: '<p class = "sentence-stim">+</p>',
+            choices: "NO_KEYS", // No keys allowed during fixation
+            trial_duration: fixation_dur, // Duration of fixation in milliseconds
+            response_ends_trial: false,
+          },
+          {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: function(){
+              return `<p class = "sentence-stim"> ${jsPsych.timelineVariable('sentence')} </p>`
+            },
+            choices: "NO_KEYS",
+            trial_duration: sentence_duration,
+          },
+          {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: function() {
+              const picture_path = 'stimuli/practice_imgs/' + jsPsych.timelineVariable('picture');
+              return `<div class="picture-stim"><img src="${picture_path}" class="stimulus-image"></div>`;
+            },
+            prompt: `<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "${target_key.toUpperCase()}" </span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "${non_target_key.toUpperCase()}"</span></p>`,
+            choices: possible_response_keys,
+            stimulus_duration: picture_duration,
+            trial_duration: max_response_time,
+            response_ends_trial: true,
+            post_trial_gap: iti_duration,
+            on_finish: function(data) {
+                // Record accuracy and congruency
+                data.type = 'practice';
+                data.is_target = jsPsych.timelineVariable('condition');
+                data.picture = jsPsych.timelineVariable('picture');
+                data.sentence = jsPsych.timelineVariable('sentence');
+
+                // Check if the response was correct
+                let correct_response = 0;
+                if (data.is_target == "Target"){
+                  correct_response = target_key;
+                } else {
+                  correct_response = non_target_key;
+                }
+
+                data.acc = (data.response == correct_response) ? 1 : 0;
+            }
+          },
+          {
+            type: jsPsychHtmlKeyboardResponse,
+            stimulus: function(){
+              const last_trial_correct = jsPsych.data.get().last(1).values()[0].acc;
+              const last_response = jsPsych.data.get().last(1).values()[0].response;
+              if (last_trial_correct) {
+                return '<div class = "feedback-stim"><span style = "color: green">Richtig</span></div>'; 
+              } else if (last_response == null){
+                return '<div class = "feedback-stim"><span style = "color: red">Zu langsam!</span></div>'; 
+              } else {
+                return '<div class = "feedback-stim"><span style = "color: red">Falsch</span></div>'; 
+              }
+            },
+            choices: "NO_KEYS", // No keys allowed during fixation
+            trial_duration: feedback_dur, // Duration of fixation in milliseconds
+            response_ends_trial: false,
+            post_trial_gap: iti_duration,
+            data: {type: 'feedback'}
+          }
+        ],
+        timeline_variables: prac_trials_list,
+        randomize_order: false
+      }
 
       var sentence_picture_procedure_1 = {
         timeline: [
@@ -95,7 +183,7 @@
               const picture_path = 'stimuli/imgs/' + jsPsych.timelineVariable('picture');
               return `<div class="picture-stim"><img src="${picture_path}" class="stimulus-image"></div>`;
             },
-            prompt: '<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "D"</span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "L"</span></p>',
+            prompt: `<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "${target_key.toUpperCase()}" </span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "${non_target_key.toUpperCase()}"</span></p>`,
             choices: possible_response_keys,
             stimulus_duration: picture_duration,
             trial_duration: max_response_time,
@@ -112,13 +200,14 @@
                 data.trial_num = jsPsych.timelineVariable('trial_num');
                 data.block_num = jsPsych.timelineVariable('block_num');
                 data.sentence_id = jsPsych.timelineVariable('sentence_id');
+                data.target_key = target_key;
 
                 // Check if the response was correct
                 let correct_response = 0;
                 if (data.is_target == "Target"){
-                  correct_response = "d";
+                  correct_response = target_key;
                 } else {
-                  correct_response = "l";
+                  correct_response = non_target_key;
                 }
 
                 data.acc = (data.response == correct_response) ? 1 : 0;
@@ -152,7 +241,7 @@
               const picture_path = 'stimuli/imgs/' + jsPsych.timelineVariable('picture');
               return `<div class="picture-stim"><img src="${picture_path}" class="stimulus-image"></div>`;
             },
-            prompt: '<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "D"</span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "L"</span></p>',
+            prompt: `<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "${target_key.toUpperCase()}" </span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "${non_target_key.toUpperCase()}"</span></p>`,
             choices: possible_response_keys,
             trial_duration: picture_duration,
             response_ends_trial: true,
@@ -168,13 +257,14 @@
                 data.trial_num = jsPsych.timelineVariable('trial_num');
                 data.block_num = jsPsych.timelineVariable('block_num');
                 data.sentence_id = jsPsych.timelineVariable('sentence_id');
+                data.target_key = target_key;
 
                 // Check if the response was correct
                 let correct_response = 0;
                 if (data.is_target == "Target"){
-                  correct_response = "d";
+                  correct_response = target_key;
                 } else {
-                  correct_response = "l";
+                  correct_response = non_target_key;
                 }
 
                 data.acc = (data.response == correct_response) ? 1 : 0;
@@ -208,7 +298,7 @@
               const picture_path = 'stimuli/imgs/' + jsPsych.timelineVariable('picture');
               return `<div class="picture-stim"><img src="${picture_path}" class="stimulus-image"></div>`;
             },
-            prompt: '<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "D"</span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "L"</span></p>',
+            prompt: `<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "${target_key.toUpperCase()}" </span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "${non_target_key.toUpperCase()}"</span></p>`,
             choices: possible_response_keys,
             trial_duration: picture_duration,
             response_ends_trial: true,
@@ -224,13 +314,14 @@
                 data.trial_num = jsPsych.timelineVariable('trial_num');
                 data.block_num = jsPsych.timelineVariable('block_num');
                 data.sentence_id = jsPsych.timelineVariable('sentence_id');
+                data.target_key = target_key;
 
                 // Check if the response was correct
                 let correct_response = 0;
                 if (data.is_target == "Target"){
-                  correct_response = "d";
+                  correct_response = target_key;
                 } else {
-                  correct_response = "l";
+                  correct_response = non_target_key;
                 }
 
                 data.acc = (data.response == correct_response) ? 1 : 0;
@@ -256,7 +347,7 @@
       }
 
       //experiment_timeline = [preload, instructions, sentence_picture_procedure];
-      experiment_timeline = [preload, sentence_picture_procedure_1, block_break_1, sentence_picture_procedure_2, block_break_2, sentence_picture_procedure_3, debriefing]
+      experiment_timeline = [preload, practice_instructions, practice_trials, experiment_instructions, sentence_picture_procedure_1, block_break_1, sentence_picture_procedure_2, block_break_2, sentence_picture_procedure_3, debriefing]
       jsPsych.run(experiment_timeline);
     }
 
