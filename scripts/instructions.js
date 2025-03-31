@@ -12,7 +12,7 @@ var practice_instructions = {
 var experiment_instructions = {
     type: jsPsychInstructions,
     pages: [
-            '<div class = "normal-text"><p>Nun geht es richtig los. Du erhältst kein Feedback mehr. Antworte so schnell und genau wie möglich.</p></div>',
+            `<div class = "normal-text"><p>Nun geht es richtig los. Du erhältst kein Feedback mehr. Außerdem werden die Bilder nach ${picture_duration / 1000} Sekunden nicht mehr angezeigt. Antworte so schnell und genau wie möglich.</p></div>`,
         ],
     show_clickable_nav: true, 
     data: {type: 'instructions'},

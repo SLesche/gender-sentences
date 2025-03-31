@@ -114,7 +114,7 @@
             },
             prompt: `<p class = "normal-text">Ist das Bild passend zur Aussage? <br><br><span style="color: green;">Ja = "${target_key.toUpperCase()}" </span>   &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   <span style="color: red;">Nein = "${non_target_key.toUpperCase()}"</span></p>`,
             choices: possible_response_keys,
-            stimulus_duration: picture_duration,
+            stimulus_duration: max_response_time,
             trial_duration: max_response_time,
             response_ends_trial: true,
             post_trial_gap: iti_duration,
