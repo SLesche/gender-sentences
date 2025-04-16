@@ -28,8 +28,8 @@ let timeline = [];
 const possible_response_keys = ["d", "l", " "];
 
 const picture_duration = 1000;
-const max_response_time = 5000;
-const sentence_duration = 2000;
+const max_response_time = 3000;
+const sentence_duration = 2500;
 const fixation_dur = 600;
 const iti_duration = 1000;
 const feedback_dur = 1000;

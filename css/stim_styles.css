@@ -10,9 +10,7 @@ body {
   }
   
 .sentence-stim {
-    font-size: 50px;
-    word-wrap: break-word; /* Breaks long words that don't fit */
-    overflow-wrap: break-word; /* Same as word-wrap, but more widely supported */
+    font-size: 40px;
     white-space: normal; /* Ensures text wraps within the container */
     text-align: center; /* Centers the text if needed */
     line-height: 1.4; /* Adds space between lines to prevent overlap */

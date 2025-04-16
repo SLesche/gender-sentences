@@ -142,11 +142,11 @@
               const last_trial_correct = jsPsych.data.get().last(1).values()[0].acc;
               const last_response = jsPsych.data.get().last(1).values()[0].response;
               if (last_trial_correct) {
-                return '<div class = "feedback-stim"><span style = "color: green">Richtig</span></div>'; 
+                return '<div class = "feedback-stim"><span style = "color: green">Richtig gedrückt</span></div>'; 
               } else if (last_response == null){
                 return '<div class = "feedback-stim"><span style = "color: red">Zu langsam!</span></div>'; 
               } else {
-                return '<div class = "feedback-stim"><span style = "color: red">Falsch</span></div>'; 
+                return '<div class = "feedback-stim"><span style = "color: red">Falsch gedrückt</span></div>'; 
               }
             },
             choices: "NO_KEYS", // No keys allowed during fixation
