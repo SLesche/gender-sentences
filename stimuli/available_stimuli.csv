@@ -128,7 +128,7 @@ TS_musiker_essen_burg_gemischt.jpg;Target;Die Musiker*innen essen in der Burg.;;
 TS_kinobesucher_kaffeetrinken_bahnhof_frauen.jpg;Target;Die Kinobesucher trinken Kaffee im Bahnhof.;;;gen_masc;women;22
 TS_kinobesucher_kaffeetrinken_bahnhof_männer.jpg;Target;Die Kinobesucher trinken Kaffee im Bahnhof.;;;gen_masc;men;22
 TS_kinobesucher_kaffeetrinken_bahnhof_gemischt.jpg;Target;Die Kinobesucher trinken Kaffee im Bahnhof.;;;gen_masc;mixed;22
-TS_kinobesucher_kaffeetrinken_bahnhof_ frauen.jpg;Target;Die Kinobesucher*innen trinken Kaffee im Bahnhof.;;;gen_star;women;22
+TS_kinobesucher_kaffeetrinken_bahnhof_frauen.jpg;Target;Die Kinobesucher*innen trinken Kaffee im Bahnhof.;;;gen_star;women;22
 TS_kinobesucher_kaffeetrinken_bahnhof_männer.jpg;Target;Die Kinobesucher*innen trinken Kaffee im Bahnhof.;;;gen_star;men;22
 TS_kinobesucher_kaffeetrinken_bahnhof_gemischt.jpg;Target;Die Kinobesucher*innen trinken Kaffee im Bahnhof.;;;gen_star;mixed;22
 TS_maler_lesen_supermarkt_frauen.jpg;Target;Die Maler lesen im Supermarkt.;;;gen_masc;women;23
